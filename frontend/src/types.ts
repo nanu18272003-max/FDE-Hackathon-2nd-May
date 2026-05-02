@@ -21,6 +21,12 @@ export interface SuggestedCondition {
   rationale: string;
 }
 
+export interface ReportInsight {
+  category: string;
+  detail: string;
+  simplified_explanation: string;
+}
+
 export interface TriageResult {
   tier: TriageTier;
   confidence: "LOW" | "MEDIUM" | "HIGH";
@@ -35,6 +41,7 @@ export interface TriageResult {
   mental_health_flag: boolean;
   user_message: string;
   disclaimer: string;
+  report_analysis?: ReportInsight[];
 }
 
 export interface ClinicResult {

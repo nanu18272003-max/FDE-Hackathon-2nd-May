@@ -35,7 +35,6 @@ interface DashboardProps {
 export function Dashboard({
   triage,
   clinicResults,
-  clinicSearchStatus,
 }: DashboardProps) {
   const [showClinicsDespiteEmergency, setShowClinicsDespiteEmergency] =
     useState(false);
@@ -153,7 +152,7 @@ export function Dashboard({
           <div className="dashboard-section animate-fade-in">
             <h3 className="section-title">Medical Report Analysis</h3>
             <div className="report-insight-grid">
-              {triage.report_analysis.map((insight, i) => (
+              {triage.report_analysis.map((insight, i: number) => (
                 <div key={i} className="report-insight-card">
                   <div className="insight-header">
                     <span className="insight-category">{insight.category}</span>

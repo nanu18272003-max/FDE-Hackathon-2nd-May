@@ -3,6 +3,7 @@ import type { Mode } from "../hooks/useTriage";
 interface HeaderProps {
   mode: Mode;
   setMode: (mode: Mode) => void;
+  onClear?: () => void;
 }
 
 export function Header({ mode, setMode }: HeaderProps) {
