@@ -8,6 +8,10 @@
   gap: 2rem;
 }
 
+.tour-active {
+  padding-bottom: 30rem !important; /* Ensure space for tour cards at the bottom */
+}
+
 /* Header */
 .app-header {
   display: flex;

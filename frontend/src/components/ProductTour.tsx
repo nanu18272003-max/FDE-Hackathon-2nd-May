@@ -69,10 +69,15 @@ export function ProductTour({ onComplete }: ProductTourProps) {
       let t = rect.top + rect.height / 2;
       let l = rect.left + rect.width / 2;
 
-      if (step.position === "bottom") t = rect.bottom + 20;
-      if (step.position === "top") t = rect.top - 200;
-      if (step.position === "left") l = rect.left - 320;
-      if (step.position === "right") l = rect.right + 20;
+      // Smart flip: if bottom position goes off-screen, use top
+      const effectivePosition = (step.position === "bottom" && rect.bottom + 250 > window.innerHeight) 
+        ? "top" 
+        : step.position;
+
+      if (effectivePosition === "bottom") t = rect.bottom + 20;
+      if (effectivePosition === "top") t = rect.top - 220;
+      if (effectivePosition === "left") l = rect.left - 340;
+      if (effectivePosition === "right") l = rect.right + 20;
 
       setCoords({ top: t, left: l });
       target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });

@@ -70,7 +70,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${showTour ? 'tour-active' : ''}`}>
       <Header 
         mode={mode} 
         setMode={setMode} 
