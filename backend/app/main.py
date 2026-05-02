@@ -155,6 +155,7 @@ async def _run_triage_pipeline(
     pincode: str | None,
     address: str | None,
     raw_files: list[Any],
+    api_key: str | None = None,
 ) -> TriageResponse:
     """Shared core for JSON and multipart requests."""
     latest = (message or "").strip()
@@ -214,16 +215,25 @@ async def _run_triage_pipeline(
     err_detail: str | None = None
 
     try:
-        if not settings.openrouter_api_key:
-            triage = _safe_fallback_triage("Add your OpenRouter API key to enable AI triage.")
-            err_detail = "OPENROUTER_API_KEY missing"
+        if not (api_key or settings.openrouter_api_key):
+            triage = _safe_fallback_triage("Please provide your OpenRouter API key in settings to enable triage.")
+            err_detail = "API Key missing"
         else:
-            raw = await complete_triage_json(llm_messages, clinic_results=clinic_results if clinic_results else None)
+            raw = await complete_triage_json(
+                llm_messages, 
+                clinic_results=clinic_results if clinic_results else None,
+                override_api_key=api_key
+            )
             try:
                 triage = parse_triage_json(raw)
             except ValueError as e:
                 logger.warning("JSON parse failed, attempting repair: %s", e)
-                raw2 = await complete_triage_json_repair(llm_messages, raw, clinic_results=clinic_results if clinic_results else None)
+                raw2 = await complete_triage_json_repair(
+                    llm_messages, 
+                    raw, 
+                    clinic_results=clinic_results if clinic_results else None,
+                    override_api_key=api_key
+                )
                 triage = parse_triage_json(raw2)
             triage = validate_needs_more_info_consistency(triage)
     except HTTPException:
@@ -288,6 +298,8 @@ async def triage_endpoint(request: Request) -> TriageResponse:
     cid = body.conversation_id or str(uuid.uuid4())
     logger.info("triage request conversation_id=%s", cid[:8])
 
+    user_api_key = request.headers.get("X-OpenRouter-Key")
+
     result = await _run_triage_pipeline(
         message=body.message,
         messages=body.messages,
@@ -295,5 +307,6 @@ async def triage_endpoint(request: Request) -> TriageResponse:
         pincode=body.pincode,
         address=body.address,
         raw_files=raw_files,
+        api_key=user_api_key,
     )
     return result

@@ -52,7 +52,8 @@ export function useTriage() {
 
   const submitTriage = async (
     message: string,
-    isForm: boolean = false
+    isForm: boolean = false,
+    apiKey?: string
   ) => {
     setLoading(true);
     setError(null);
@@ -66,7 +67,8 @@ export function useTriage() {
           address: address.trim() || null,
           conversation_id: conversationId,
         },
-        files
+        files,
+        apiKey
       );
       
       setLastResponse(res);

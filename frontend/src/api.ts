@@ -68,11 +68,16 @@ export function validateFiles(files: File[]): void {
 export async function postTriage(
   body: TriageRequestBody,
   files: File[] = [],
+  apiKey?: string,
 ): Promise<TriageResponse> {
   const msg = body.message ?? "";
   validateOutgoingMessage(msg);
 
   let res: Response;
+  const headers: Record<string, string> = {};
+  if (apiKey) {
+    headers["X-OpenRouter-Key"] = apiKey;
+  }
 
   if (files.length > 0) {
     validateFiles(files);
@@ -88,12 +93,16 @@ export async function postTriage(
     }
     res = await fetch("/api/triage", {
       method: "POST",
+      headers,
       body: fd,
     });
   } else {
     res = await fetch("/api/triage", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        ...headers,
+        "Content-Type": "application/json" 
+      },
       body: JSON.stringify({
         message: msg || null,
         messages: body.messages ?? [],

@@ -9,6 +9,12 @@ import "./App.css";
 
 function App() {
   const [showLanding, setShowLanding] = useState(true);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem("openrouter_api_key") || "");
+
+  const handleSetApiKey = (val: string) => {
+    setApiKey(val);
+    localStorage.setItem("openrouter_api_key", val);
+  };
   const {
     mode,
     setMode,
@@ -38,7 +44,13 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Header mode={mode} setMode={setMode} onClear={clearSession} />
+      <Header 
+        mode={mode} 
+        setMode={setMode} 
+        onClear={clearSession} 
+        apiKey={apiKey}
+        setApiKey={handleSetApiKey}
+      />
 
       <main id="main-content" className="layout-grid">
         <div className="panel triage-panel">
@@ -106,7 +118,7 @@ function App() {
               mergeNewFiles={mergeNewFiles}
               removeFile={removeFile}
               clearSession={clearSession}
-              submitTriage={submitTriage}
+              submitTriage={(msg: string) => submitTriage(msg, false, apiKey)}
               error={error}
             />
           ) : (
@@ -115,7 +127,7 @@ function App() {
               files={files}
               mergeNewFiles={mergeNewFiles}
               removeFile={removeFile}
-              submitTriage={submitTriage}
+              submitTriage={(msg: string) => submitTriage(msg, true, apiKey)}
               error={error}
             />
           )}

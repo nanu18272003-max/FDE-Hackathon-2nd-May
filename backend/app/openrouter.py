@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 async def complete_triage_json(
     chat_messages: list[dict[str, Any]],
     clinic_results: list[Any] | None = None,
+    override_api_key: str | None = None,
 ) -> str:
     """
     Send system prompt + chat messages to OpenRouter; return assistant message content.
@@ -22,14 +23,15 @@ async def complete_triage_json(
         RuntimeError: missing API key or HTTP failure after retries.
         ValueError: empty model response.
     """
-    if not settings.openrouter_api_key:
+    api_key = override_api_key or settings.openrouter_api_key
+    if not api_key:
         raise RuntimeError(
-            "OPENROUTER_API_KEY is not set. Add it to backend/.env for live triage."
+            "OpenRouter API Key is missing. Please provide it in the app settings."
         )
 
     url = f"{settings.openrouter_base_url.rstrip('/')}/chat/completions"
     headers = {
-        "Authorization": f"Bearer {settings.openrouter_api_key}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://github.com/fde-hackathon/symptom-triage",
         "X-Title": "Symptom Triage Assistant",
@@ -84,11 +86,13 @@ async def complete_triage_json(
 async def complete_triage_json_repair(
     chat_messages: list[dict[str, Any]], 
     bad_reply: str,
-    clinic_results: list[Any] | None = None
+    clinic_results: list[Any] | None = None,
+    override_api_key: str | None = None,
 ) -> str:
     """Second call asking only for valid JSON fixing the previous output."""
-    if not settings.openrouter_api_key:
-        raise RuntimeError("OPENROUTER_API_KEY is not set.")
+    api_key = override_api_key or settings.openrouter_api_key
+    if not api_key:
+        raise RuntimeError("OpenRouter API Key is missing.")
 
     extended = [
         *chat_messages,
@@ -104,7 +108,7 @@ async def complete_triage_json_repair(
 
     url = f"{settings.openrouter_base_url.rstrip('/')}/chat/completions"
     headers = {
-        "Authorization": f"Bearer {settings.openrouter_api_key}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://github.com/fde-hackathon/symptom-triage",
         "X-Title": "Symptom Triage Assistant",
