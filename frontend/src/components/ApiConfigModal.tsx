@@ -42,7 +42,7 @@ export function ApiConfigModal({ apiKey, setApiKey, onClose }: ApiConfigModalPro
             <h4>Don't have a key?</h4>
             <p>
               1. Create a free account at <a href="https://openrouter.ai" target="_blank">openrouter.ai</a><br/>
-              2. Generate a key in <strong>Settings > Keys</strong><br/>
+              2. Generate a key in <strong>Settings &gt; Keys</strong><br/>
               3. Paste it here to unlock unlimited AI triage sessions.
             </p>
           </div>
