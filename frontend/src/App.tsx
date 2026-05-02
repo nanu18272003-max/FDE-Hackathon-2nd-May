@@ -20,25 +20,27 @@ function App() {
     localStorage.setItem("openrouter_api_key", val);
   };
 
+  // 1. Onboarding Logic: Landing -> API Modal -> Tour
   useEffect(() => {
-    if (!showLanding) {
-      const hasSeenTour = localStorage.getItem("has_seen_tour_v1");
+    if (!showLanding && !apiKey) {
+      setShowApiModal(true);
+    }
+  }, [showLanding, apiKey]);
+
+  // 2. Trigger tour ONLY after API modal is closed (or key is provided)
+  useEffect(() => {
+    if (!showLanding && apiKey && !showApiModal) {
+      const hasSeenTour = localStorage.getItem("has_seen_tour_v2");
       if (!hasSeenTour) {
         setShowTour(true);
       }
     }
-  }, [showLanding]);
+  }, [showLanding, apiKey, showApiModal]);
 
   const handleTourComplete = () => {
     setShowTour(false);
-    localStorage.setItem("has_seen_tour_v1", "true");
+    localStorage.setItem("has_seen_tour_v2", "true");
   };
-
-  useEffect(() => {
-    if (!showLanding && !apiKey && !showTour) {
-      setShowApiModal(true);
-    }
-  }, [showLanding, apiKey, showTour]);
 
   const {
     mode,

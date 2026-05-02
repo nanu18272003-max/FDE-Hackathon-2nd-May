@@ -75,7 +75,7 @@ export function ProductTour({ onComplete }: ProductTourProps) {
       if (step.position === "right") l = rect.right + 20;
 
       setCoords({ top: t, left: l });
-      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
       target.classList.add("tour-highlight");
       
       return () => {
